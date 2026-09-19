@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from app.ui.dashboard import DashboardView
+from app.ui.activities import ActivitiesView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -78,11 +79,12 @@ class Sport_aidApp(ctk.CTk):
         """Creates individual workspace view frames stacked inside column 1."""
         self.views = {}
 
-        # 1. Instantiate the real production Dashboard View panel
+        # Instantiate production views
         self.views["dashboard"] = DashboardView(parent=self, controller=self)
+        self.views["activities"] = ActivitiesView(parent=self, controller=self)
 
-        # 2. Construct temporary isolated placeholder panels for outstanding views
-        rem_views = ["routines", "activities", "track", "progress", "settings"]
+        # Construct temporary isolated placeholder panels for remaining views
+        rem_views = ["routines", "track", "progress", "settings"]
         for key in rem_views:
             frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
             self.views[key] = frame
@@ -98,16 +100,20 @@ class Sport_aidApp(ctk.CTk):
     def _select_navigation_view(self, view_name: str):
         """Manages router states, updates sidebar active states, and displays correct views."""
         for key, button in self.nav_buttons.items():
-            button.configure(fg_color="transparent", text_color="#A1A1AA", font=ctk.CTkFont(family="segoe UI",size=14,weight="normal"))
+            button.configure(fg_color="transparent", text_color="#A1A1AA", font=ctk.CTkFont(weight="normal"))
 
         if view_name in self.nav_buttons:
             self.nav_buttons[view_name].configure(
                 fg_color="#0EA5E9",
                 text_color="#FFFFFF",
-                font=ctk.CTkFont(family="segoe UI",size=14,weight="bold")
+                font=ctk.CTkFont(weight="bold")
             )
 
         for frame in self.views.values():
             frame.grid_forget()
+
+        # Call window refresh routines if the view has an active tracking loop
+        if hasattr(self.views[view_name], "refresh_logs_display"):
+            self.views[view_name].refresh_logs_display()
 
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
