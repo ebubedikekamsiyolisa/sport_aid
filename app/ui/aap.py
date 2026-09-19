@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.ui.dashboard import DashboardView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -12,16 +13,15 @@ class Sport_aidApp(ctk.CTk):
         super().__init__()
 
         # --- DESIGN SYSTEM & SYSTEM CONFIGURATION ---
-        self.title("Sport_aid — Sports and Fitness Routine Manager")
+        self.title("Sport_aid — Sports & Fitness Routine Manager")
         self.geometry("1100x680")
         self.minsize(950, 600)
 
         # Enforce dark theme guidelines
         ctk.set_appearance_mode("Dark")
-        ctk.set_default_color_theme("green")  # Built-in backing theme map
+        ctk.set_default_color_theme("green")
 
         # --- WINDOW GRID CONFIGURATION ---
-        # Column 0: Fixed Sidebar width, Column 1: Stretchy Workspace panel
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -37,14 +37,14 @@ class Sport_aidApp(ctk.CTk):
         """Creates the sidebar container panel and all structural navigational buttons."""
         self.sidebar_frame = ctk.CTkFrame(self, corner_radius=0, width=220, fg_color="#2E2E2E")
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(7, weight=1)  # Pushes anything below to bottom
+        self.sidebar_frame.grid_rowconfigure(7, weight=1)
 
         # App Brand Title Header Text
         self.app_title = ctk.CTkLabel(
             self.sidebar_frame,
             text="SPORT_AID",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            text_color="#A3E635"  # Volt Lime Accent Color Accent
+            text_color="#A3E635"
         )
         self.app_title.grid(row=0, column=0, padx=20, pady=25, sticky="w")
 
@@ -59,7 +59,6 @@ class Sport_aidApp(ctk.CTk):
             ("settings", "⚙️  Settings", 6)
         ]
 
-        # Generate each styled interactive button matching design tokens
         for key, text, row_idx in nav_items:
             btn = ctk.CTkButton(
                 self.sidebar_frame,
@@ -79,13 +78,15 @@ class Sport_aidApp(ctk.CTk):
         """Creates individual workspace view frames stacked inside column 1."""
         self.views = {}
 
-        # Construct isolated placeholder panels for each view
-        view_keys = ["dashboard", "routines", "activities", "track", "progress", "settings"]
-        for key in view_keys:
+        # 1. Instantiate the real production Dashboard View panel
+        self.views["dashboard"] = DashboardView(parent=self, controller=self)
+
+        # 2. Construct temporary isolated placeholder panels for outstanding views
+        rem_views = ["routines", "activities", "track", "progress", "settings"]
+        for key in rem_views:
             frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
             self.views[key] = frame
 
-            # Temporary internal page placeholder layout
             placeholder_label = ctk.CTkLabel(
                 frame,
                 text=f"{key.capitalize()} Interface View",
@@ -96,20 +97,17 @@ class Sport_aidApp(ctk.CTk):
 
     def _select_navigation_view(self, view_name: str):
         """Manages router states, updates sidebar active states, and displays correct views."""
-        # Reset button states back to unselected styling
         for key, button in self.nav_buttons.items():
-            button.configure(fg_color="transparent", text_color="#A1A1AA", font=ctk.CTkFont(weight="normal"))
-# Apply prominent highlight state tokens to selected navigation item
+            button.configure(fg_color="transparent", text_color="#A1A1AA", font=ctk.CTkFont(family="segoe UI",size=14,weight="normal"))
+
         if view_name in self.nav_buttons:
             self.nav_buttons[view_name].configure(
-                fg_color="#0EA5E9",      # Tech Teal Focus Accent
+                fg_color="#0EA5E9",
                 text_color="#FFFFFF",
-                font=ctk.CTkFont(weight="bold")
+                font=ctk.CTkFont(family="segoe UI",size=14,weight="bold")
             )
 
-        # Hide all placeholder page frames entirely from view layout
         for frame in self.views.values():
             frame.grid_forget()
 
-        # Display chosen structural application panel frame
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
