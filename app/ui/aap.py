@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from app.ui.dashboard import DashboardView
 from app.ui.activities import ActivitiesView
+from app.ui.routines import RoutinesView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -82,9 +83,10 @@ class Sport_aidApp(ctk.CTk):
         # Instantiate production views
         self.views["dashboard"] = DashboardView(parent=self, controller=self)
         self.views["activities"] = ActivitiesView(parent=self, controller=self)
+        self.views["routines"] = RoutinesView(parent=self, controller=self)
 
         # Construct temporary isolated placeholder panels for remaining views
-        rem_views = ["routines", "track", "progress", "settings"]
+        rem_views = ["track", "progress", "settings"]
         for key in rem_views:
             frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
             self.views[key] = frame
@@ -112,8 +114,10 @@ class Sport_aidApp(ctk.CTk):
         for frame in self.views.values():
             frame.grid_forget()
 
-        # Call window refresh routines if the view has an active tracking loop
+        # Execute screen data reloading dynamically if hooked up
         if hasattr(self.views[view_name], "refresh_logs_display"):
             self.views[view_name].refresh_logs_display()
+        if hasattr(self.views[view_name], "reload_routines_context"):
+            self.views[view_name].reload_routines_context()
 
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
