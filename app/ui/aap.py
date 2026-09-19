@@ -3,6 +3,7 @@ from app.ui.dashboard import DashboardView
 from app.ui.activities import ActivitiesView
 from app.ui.routines import RoutinesView
 from app.ui.settings import SettingsView
+from app.ui.progress import ProgressView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -86,9 +87,10 @@ class Sport_aidApp(ctk.CTk):
         self.views["activities"] = ActivitiesView(parent=self, controller=self)
         self.views["routines"] = RoutinesView(parent=self, controller=self)
         self.views["settings"] = SettingsView(parent=self, controller=self)
+        self.views["progress"] = ProgressView(parent=self, controller=self)
 
-        # Construct temporary isolated placeholder panels for remaining views
-        rem_views = ["track", "progress"]
+        # Construct temporary isolated placeholder panels for outstanding views
+        rem_views = ["track"]
         for key in rem_views:
             frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
             self.views[key] = frame
@@ -116,12 +118,14 @@ class Sport_aidApp(ctk.CTk):
         for frame in self.views.values():
             frame.grid_forget()
 
-        # Execute screen data reloading dynamically if hooked up
+        # Dynamic live data reloading cascades
         if hasattr(self.views[view_name], "refresh_logs_display"):
             self.views[view_name].refresh_logs_display()
         if hasattr(self.views[view_name], "reload_routines_context"):
             self.views[view_name].reload_routines_context()
         if hasattr(self.views[view_name], "load_profile_data"):
             self.views[view_name].load_profile_data()
+        if hasattr(self.views[view_name], "refresh_statistics_metrics"):
+            self.views[view_name].refresh_statistics_metrics()
 
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
