@@ -4,6 +4,7 @@ from app.ui.activities import ActivitiesView
 from app.ui.routines import RoutinesView
 from app.ui.settings import SettingsView
 from app.ui.progress import ProgressView
+from app.ui.workout import WorkoutTrackView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -88,20 +89,7 @@ class Sport_aidApp(ctk.CTk):
         self.views["routines"] = RoutinesView(parent=self, controller=self)
         self.views["settings"] = SettingsView(parent=self, controller=self)
         self.views["progress"] = ProgressView(parent=self, controller=self)
-
-        # Construct temporary isolated placeholder panels for outstanding views
-        rem_views = ["track"]
-        for key in rem_views:
-            frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
-            self.views[key] = frame
-
-            placeholder_label = ctk.CTkLabel(
-                frame,
-                text=f"{key.capitalize()} Interface View",
-                font=ctk.CTkFont(family="Segoe UI", size=22, weight="bold"),
-                text_color="#FFFFFF"
-            )
-            placeholder_label.pack(pady=40, padx=40, anchor="w")
+        self.views["track"] = WorkoutTrackView(parent=self, controller=self)
 
     def _select_navigation_view(self, view_name: str):
         """Manages router states, updates sidebar active states, and displays correct views."""
@@ -118,7 +106,7 @@ class Sport_aidApp(ctk.CTk):
         for frame in self.views.values():
             frame.grid_forget()
 
-        # Dynamic live data reloading cascades
+        # Dynamic data reload distribution sweeps
         if hasattr(self.views[view_name], "refresh_logs_display"):
             self.views[view_name].refresh_logs_display()
         if hasattr(self.views[view_name], "reload_routines_context"):
@@ -127,5 +115,7 @@ class Sport_aidApp(ctk.CTk):
             self.views[view_name].load_profile_data()
         if hasattr(self.views[view_name], "refresh_statistics_metrics"):
             self.views[view_name].refresh_statistics_metrics()
+        if hasattr(self.views[view_name], "reload_available_routines"):
+            self.views[view_name].reload_available_routines()
 
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
