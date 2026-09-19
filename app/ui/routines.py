@@ -238,7 +238,7 @@ class RoutinesView(ctk.CTkFrame):
             lbl_none = ctk.CTkLabel(
                     r_card,
                     text="   (No exercises appended to this blueprint yet)",
-                    font=ctk.CTkFont(size=11, italic=True),
+                    font=ctk.CTkFont(size=11,italic = True),
                     text_color="#A1A1AA"
                 )
             lbl_none.pack(anchor="w", padx=15, pady=(2, 10))

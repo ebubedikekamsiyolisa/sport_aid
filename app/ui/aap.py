@@ -2,6 +2,7 @@ import customtkinter as ctk
 from app.ui.dashboard import DashboardView
 from app.ui.activities import ActivitiesView
 from app.ui.routines import RoutinesView
+from app.ui.settings import SettingsView
 
 
 class Sport_aidApp(ctk.CTk):
@@ -84,9 +85,10 @@ class Sport_aidApp(ctk.CTk):
         self.views["dashboard"] = DashboardView(parent=self, controller=self)
         self.views["activities"] = ActivitiesView(parent=self, controller=self)
         self.views["routines"] = RoutinesView(parent=self, controller=self)
+        self.views["settings"] = SettingsView(parent=self, controller=self)
 
         # Construct temporary isolated placeholder panels for remaining views
-        rem_views = ["track", "progress", "settings"]
+        rem_views = ["track", "progress"]
         for key in rem_views:
             frame = ctk.CTkFrame(self, corner_radius=0, fg_color="#1A1A1A")
             self.views[key] = frame
@@ -119,5 +121,7 @@ class Sport_aidApp(ctk.CTk):
             self.views[view_name].refresh_logs_display()
         if hasattr(self.views[view_name], "reload_routines_context"):
             self.views[view_name].reload_routines_context()
+        if hasattr(self.views[view_name], "load_profile_data"):
+            self.views[view_name].load_profile_data()
 
         self.views[view_name].grid(row=0, column=1, sticky="nsew")
