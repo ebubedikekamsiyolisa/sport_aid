@@ -9,33 +9,34 @@ from app.ui.workout import WorkoutTrackView
 
 class Sport_aidApp(ctk.CTk):
     """
-    The main Application Frame and window controller for Sport_aid.
-    Establishes the design tokens, window bounds, sidebar navigation layout,
-    and view-switching routing mechanism.
+    The central structural application shell and window controller for Sport_aid.
+    Establishes dark-mode layout parameters and global layout sync routing passes.
     """
 
     def __init__(self):
         super().__init__()
 
-        # --- DESIGN SYSTEM & SYSTEM CONFIGURATION ---
+        # --- DESIGN SYSTEM & LAYOUT CONSTRAINTS ---
         self.title("Sport_aid — Sports & Fitness Routine Manager")
         self.geometry("1100x680")
-        self.minsize(950, 600)
 
-        # Enforce dark theme guidelines
+        # Enforce rigid minimizations floor limits to prevent responsive layout damage
+        self.minsize(980, 620)
+
+        # Force Dark Tech Aesthetic theme rules
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("green")
 
-        # --- WINDOW GRID CONFIGURATION ---
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
+        # --- COLUMN WIDTH LAYOUT SCHEMAS ---
+        self.grid_columnconfigure(0, weight=0)  # Sidebar locked frame width
+        self.grid_columnconfigure(1, weight=1)  # Workspace expands
         self.grid_rowconfigure(0, weight=1)
 
         # --- UI LAYOUT ASSEMBLY ---
         self._build_sidebar_navigation()
         self._build_workspace_canvas()
 
-        # Initialize by selecting the Dashboard default panel
+        # Default focus view target routing
         self._select_navigation_view("dashboard")
 
     def _build_sidebar_navigation(self):
@@ -44,7 +45,7 @@ class Sport_aidApp(ctk.CTk):
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(7, weight=1)
 
-        # App Brand Title Header Text
+        # Glowing brand header text logo string
         self.app_title = ctk.CTkLabel(
             self.sidebar_frame,
             text="SPORT_AID",
@@ -53,7 +54,6 @@ class Sport_aidApp(ctk.CTk):
         )
         self.app_title.grid(row=0, column=0, padx=20, pady=25, sticky="w")
 
-        # Define all navigation links to assemble
         self.nav_buttons = {}
         nav_items = [
             ("dashboard", "🏠  Dashboard", 1),
@@ -80,10 +80,9 @@ class Sport_aidApp(ctk.CTk):
             self.nav_buttons[key] = btn
 
     def _build_workspace_canvas(self):
-        """Creates individual workspace view frames stacked inside column 1."""
+        """Instantiates all real production views stacked inside our display canvas space."""
         self.views = {}
 
-        # Instantiate production views
         self.views["dashboard"] = DashboardView(parent=self, controller=self)
         self.views["activities"] = ActivitiesView(parent=self, controller=self)
         self.views["routines"] = RoutinesView(parent=self, controller=self)
@@ -92,7 +91,7 @@ class Sport_aidApp(ctk.CTk):
         self.views["track"] = WorkoutTrackView(parent=self, controller=self)
 
     def _select_navigation_view(self, view_name: str):
-        """Manages router states, updates sidebar active states, and displays correct views."""
+        """Manages router states, highlights sidebar active states, and updates live database data streams."""
         for key, button in self.nav_buttons.items():
             button.configure(fg_color="transparent", text_color="#A1A1AA", font=ctk.CTkFont(weight="normal"))
 
@@ -106,7 +105,9 @@ class Sport_aidApp(ctk.CTk):
         for frame in self.views.values():
             frame.grid_forget()
 
-        # Dynamic data reload distribution sweeps
+        # --- DYNAMIC INTERFACE SYNCHRONIZATION HOOKS ---
+        if hasattr(self.views[view_name], "refresh_dashboard_data"):
+            self.views[view_name].refresh_dashboard_data()
         if hasattr(self.views[view_name], "refresh_logs_display"):
             self.views[view_name].refresh_logs_display()
         if hasattr(self.views[view_name], "reload_routines_context"):
